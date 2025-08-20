@@ -1,69 +1,63 @@
-# React + TypeScript + Vite
+# AG-Grid Calculated Columns Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a React application demonstrating a powerful, user-configurable calculated column feature for AG-Grid. It allows users to define custom columns on the fly using mathematical expressions, with support for advanced formatting and persistence.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dynamic Calculated Columns**: Add, edit, and delete custom columns in the grid.
+- **Custom Expression Builder**: A user-friendly modal for creating and editing expressions.
+- **Free-Form Input**: Utilizes a textarea for flexible, complex mathematical and logical expressions, powered by `mathjs`.
+- **Result Formatting**: Apply rounding modes (e.g., `HALF_UP`, `FLOOR`) and set a fixed number of decimal places for calculated values.
+- **Live Preview**: See the result of your expression instantly based on a sample row of data.
+- **State Persistence**: Your custom column configurations are saved to `localStorage` and reloaded on subsequent visits.
+- **Robust Error Handling**: Invalid expressions are handled gracefully, displaying `#ERROR!` in cells without crashing or polluting the console.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Framework**: React 19 with Vite
+- **Language**: TypeScript
+- **Grid**: AG-Grid Community
+- **UI Components**: Mantine UI
+- **Expression Parsing**: `mathjs`
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js (v18 or later)
+- pnpm (or your preferred package manager)
+
+### Installation
+
+1.  Clone the repository:
+    ```sh
+    git clone <repository-url>
+    ```
+2.  Navigate to the project directory:
+    ```sh
+    cd my-ag-grid-app
+    ```
+3.  Install the dependencies:
+    ```sh
+    pnpm install
+    ```
+
+### Running the Application
+
+To start the development server, run:
+
+```sh
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The application will be available at `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Building for Production
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+To create a production build, run:
+
+```sh
+pnpm build
 ```
+
+The output files will be located in the `dist/` directory.
