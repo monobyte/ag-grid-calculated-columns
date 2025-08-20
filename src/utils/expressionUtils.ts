@@ -5,10 +5,7 @@ import { create, all } from "mathjs";
 const math = create(all);
 
 // Configure mathjs to handle different rounding modes
-const roundingFunctions: Record<
-  RoundingMode,
-  (n: number, p: number) => number
-> = {
+const roundingFunctions: Record<RoundingMode, (n: number, p: number) => number> = {
   UP: (n: number, p: number) => Math.ceil(n * 10 ** p) / 10 ** p,
   DOWN: (n: number, p: number) => Math.floor(n * 10 ** p) / 10 ** p,
   CEILING: (n: number, p: number) => Math.ceil(n * 10 ** p) / 10 ** p,
@@ -51,6 +48,25 @@ math.import(
 );
 
 // --- Generic Value Getter ---
+export const getFlattenedFields = (data: any): { name: string; label: string }[] => {
+  if (typeof data !== 'object' || data === null) return [];
+
+  const flatten = (obj: any, prefix = '') => {
+    return Object.keys(obj).reduce((acc, k) => {
+      const pre = prefix.length ? prefix + '.' : '';
+      if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
+        Object.assign(acc, flatten(obj[k], pre + k));
+      } else {
+        const fieldName = pre + k;
+        acc[fieldName] = { name: fieldName, label: fieldName };
+      }
+      return acc;
+    }, {} as Record<string, { name: string; label: string }>);
+  };
+
+  return Object.values(flatten(data));
+};
+
 export const createExpressionValueGetter = (
   expression: string,
   roundingMode?: RoundingMode,
