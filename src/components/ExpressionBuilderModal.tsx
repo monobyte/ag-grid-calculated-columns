@@ -56,6 +56,11 @@ export const ExpressionBuilderModal = ({
     if (!expression) return 'Enter an expression';
     const valueGetter = createExpressionValueGetter(expression, roundingMode, decimalPlaces);
     const result = valueGetter({ data: sampleRow } as any);
+
+    if (typeof result === 'number' && decimalPlaces !== undefined) {
+      return result.toFixed(decimalPlaces);
+    }
+
     return String(result);
   }, [expression, sampleRow, roundingMode, decimalPlaces]);
 

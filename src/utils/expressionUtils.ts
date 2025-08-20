@@ -50,60 +50,44 @@ math.import(
   { override: true }
 );
 
-// Helper to flatten data for the valueGetter scope
-function flattenObject(
-  obj: any,
-  parentKey = "",
-  separator = "."
-): Record<string, any> {
-  return Object.keys(obj).reduce((acc, key) => {
-    const newKey = parentKey ? `${parentKey}${separator}${key}` : key;
-    if (
-      typeof obj[key] === "object" &&
-      obj[key] !== null &&
-      !Array.isArray(obj[key])
-    ) {
-      Object.assign(acc, flattenObject(obj[key], newKey, separator));
-    } else {
-      acc[newKey] = obj[key];
-    }
-    return acc;
-  }, {} as Record<string, any>);
-}
-
 // --- Generic Value Getter ---
 export const createExpressionValueGetter = (
   expression: string,
   roundingMode?: RoundingMode,
   decimalPlaces?: number
 ) => {
-  try {
-    const node = math.parse(expression);
-    const code = node.compile();
+  return (params: ValueGetterParams) => {
+    if (!params.data) return "";
 
-    return (params: ValueGetterParams) => {
-      if (!params.data) return "";
-      const scope = flattenObject(params.data);
-      try {
-        let result = code.evaluate(scope);
+    try {
+      const parser = math.parser();
+      // Set the row data as the scope for the parser.
+      // This makes top-level properties (e.g., 'Composite') available as symbols.
+      Object.keys(params.data).forEach(key => {
+        parser.set(key, (params.data as any)[key]);
+      });
 
-        if (
-          typeof result === "number" &&
-          roundingMode &&
-          decimalPlaces !== undefined
-        ) {
-          const roundFn = roundingFunctions[roundingMode];
-          if (roundFn) {
-            result = roundFn(result, decimalPlaces);
-          }
-        }
+      let result = parser.evaluate(expression);
 
+      if (result === '#ERROR!') {
         return result;
-      } catch (e) {
-        return "Error";
       }
-    };
-  } catch (e) {
-    return () => "Invalid Expression";
-  }
+
+      if (
+        typeof result === "number" &&
+        roundingMode &&
+        decimalPlaces !== undefined
+      ) {
+        const roundFn = roundingFunctions[roundingMode];
+        if (roundFn) {
+          result = roundFn(result, decimalPlaces);
+        }
+      }
+
+      return result;
+    } catch (e) {
+      // Catch any parsing or evaluation errors
+      return "#ERROR!";
+    }
+  };
 };
